@@ -16,9 +16,9 @@
             background-color: #f5f5f5;
             min-height: 100vh;
             display: flex;
-            align-items: center;
+            align-items: flex-start; /* make top flush */
             justify-content: center;
-            padding: 20px;
+            padding: 0 20px 20px; /* remove top padding so container is at top */
         }
 
         .container {
@@ -28,6 +28,7 @@
             border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             padding: 40px;
+            margin-top: 20px; /* keep a small gap from the very top of the viewport */
         }
 
         h1 {
