@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JDS Delivery Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+
+        h1 {
+            color: #EA5A47;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 500;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 16px;
+        }
+
+        input, select {
+            width: 100%;
+            height: 50px;
+            padding: 0 16px;
+            font-size: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            color: #333;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #EA5A47;
+        }
+
+        input::placeholder {
+            color: #9ca3af;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        select:disabled {
+            background-color: #f3f4f6;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        button {
+            width: 100%;
+            height: 50px;
+            background-color: #EA5A47;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 24px;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #d94d3a;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .message {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .message.show {
+            display: flex;
+        }
+
+        .message.error {
+            background-color: #fee;
+            color: #EA5A47;
+        }
+
+        .message.success {
+            background-color: #efe;
+            color: #10b981;
+        }
+
+        .message svg {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JDS Delivery Form</h1>
+        
+        <form id="deliveryForm">
+            <div class="form-group">
+                <label for="pickupLocation">Pickup/Drop Location:</label>
+                <input 
+                    type="text" 
+                    id="pickupLocation" 
+                    name="pickupLocation" 
+                    placeholder="Enter location"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="deliveryFee">Delivery Fee (DF):</label>
+                <input 
+                    type="text" 
+                    id="deliveryFee" 
+                    name="deliveryFee" 
+                    placeholder="Enter delivery fee"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="rider">Rider:</label>
+                <select id="rider" name="rider" required disabled>
+                    <option value="">Loading...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="admin">Admin:</label>
+                <select id="admin" name="admin" required disabled>
+                    <option value="">Loading...</option>
+                </select>
+            </div>
+
+            <button type="submit" id="submitBtn">
+                Submit
+            </button>
+
+            <div id="errorMessage" class="message error">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <span id="errorText"></span>
+            </div>
+
+            <div id="successMessage" class="message success">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                <span>Form submitted successfully!</span>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script>
+        // ====================================================================
+        // CONFIGURATION - CHANGE THESE URLs TO YOUR OWN
+        // ====================================================================
+        
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQHV_AtNWgvdQzZ3gS1V5IRfnVnQIIjh2aE9GhmeT5hHezauHtUPy7fJStnE7k0nreLCbhxTSzcMYay/pub?gid=0&single=true&output=csv';
+        
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxLXfdcjzWARIOQ5Vs76370nmyYZREsaP2ajaVWVGsxHldJfat5b54shTYgLUFn4JeL7w/exec';
+        
+        // ====================================================================
+        // FORM ELEMENTS
+        // ====================================================================
+        
+        const form = document.getElementById('deliveryForm');
+        const pickupLocationInput = document.getElementById('pickupLocation');
+        const deliveryFeeInput = document.getElementById('deliveryFee');
+        const riderSelect = document.getElementById('rider');
+        const adminSelect = document.getElementById('admin');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const successMessage = document.getElementById('successMessage');
+        
+        // ====================================================================
+        // LOAD DATA FROM GOOGLE SHEETS
+        // ====================================================================
+        
+        async function loadDropdownData() {
+            try {
+                const response = await fetch(SHEET_URL);
+                const csvText = await response.text();
+                
+                Papa.parse(csvText, {
+                    header: true,
+                    complete: function(results) {
+                        const data = results.data;
+                        
+                        // Extract unique riders
+                        const riders = [...new Set(
+                            data.map(row => row.Rider)
+                                .filter(rider => rider && rider.trim() !== '')
+                        )];
+                        
+                        // Extract unique admins
+                        const admins = [...new Set(
+                            data.map(row => row.Admin)
+                                .filter(admin => admin && admin.trim() !== '')
+                        )];
+                        
+                        // Populate rider dropdown
+                        riderSelect.innerHTML = '<option value="">Select a rider</option>';
+                        riders.forEach(rider => {
+                            const option = document.createElement('option');
+                            option.value = rider;
+                            option.textContent = rider;
+                            riderSelect.appendChild(option);
+                        });
+                        riderSelect.disabled = false;
+                        
+                        // Populate admin dropdown
+                        adminSelect.innerHTML = '<option value="">Select an admin</option>';
+                        admins.forEach(admin => {
+                            const option = document.createElement('option');
+                            option.value = admin;
+                            option.textContent = admin;
+                            adminSelect.appendChild(option);
+                        });
+                        adminSelect.disabled = false;
+                    },
+                    error: function(error) {
+                        console.error('Error parsing CSV:', error);
+                        showError('Unable to load dropdown data. Please refresh the page.');
+                        riderSelect.innerHTML = '<option value="">Error loading</option>';
+                        adminSelect.innerHTML = '<option value="">Error loading</option>';
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                showError('Unable to load dropdown data. Please refresh the page.');
+                riderSelect.innerHTML = '<option value="">Error loading</option>';
+                adminSelect.innerHTML = '<option value="">Error loading</option>';
+            }
+        }
+        
+        // ====================================================================
+        // FORM SUBMISSION
+        // ====================================================================
+        
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Hide previous messages
+            errorMessage.classList.remove('show');
+            successMessage.classList.remove('show');
+            
+            // Validate
+            if (!pickupLocationInput.value || !deliveryFeeInput.value || 
+                !riderSelect.value || !adminSelect.value) {
+                showError('Please fill in all fields');
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span>Submitting...';
+            
+            try {
+                const formData = {
+                    pickupLocation: pickupLocationInput.value,
+                    deliveryFee: deliveryFeeInput.value,
+                    rider: riderSelect.value,
+                    admin: adminSelect.value,
+                    timestamp: new Date().toISOString()
+                };
+                
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                // Show success message
+                successMessage.classList.add('show');
+                
+                // Clear form
+                form.reset();
+                
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    successMessage.classList.remove('show');
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Submission error:', error);
+                showError('Failed to submit. Please try again.');
+            } finally {
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Submit';
+            }
+        });
+        
+        // ====================================================================
+        // HELPER FUNCTIONS
+        // ====================================================================
+        
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.add('show');
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
+        }
+        
+        // ====================================================================
+        // INITIALIZE
+        // ====================================================================
+        
+        // Load dropdown data when page loads
+        loadDropdownData();
+    </script>
+</body>
+</html>
