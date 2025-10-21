@@ -154,6 +154,55 @@
             width: 20px;
             height: 20px;
         }
+
+        /* Responsive adjustments for small screens */
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+
+            .container {
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+            }
+
+            h1 {
+                font-size: 22px;
+                margin-bottom: 20px;
+            }
+
+            .form-group {
+                margin-bottom: 18px;
+            }
+
+            label {
+                font-size: 15px;
+                margin-bottom: 6px;
+            }
+
+            input, select {
+                height: 44px;
+                font-size: 15px;
+                padding: 0 12px;
+            }
+
+            button {
+                height: 44px;
+                font-size: 15px;
+                margin-top: 18px;
+            }
+
+            select {
+                background-position: right 12px center;
+                padding-right: 36px;
+            }
+
+            .message {
+                font-size: 13px;
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
